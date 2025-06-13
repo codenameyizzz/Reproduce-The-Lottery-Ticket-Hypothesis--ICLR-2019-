@@ -184,10 +184,14 @@ def plot_accuracy_vs_sparsity(all_trials_results, prune_percent):
     plt.tight_layout()
     plt.show()
 
+print("Starting full experiment...", flush=True)
+
 
 # Run Full Experiment
 if __name__ == "__main__":
     results = run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_patience=3, num_trials=5)
+    print(f"[Progress] Iteration {iteration+1}/{max_iterations} - Accuracy: {accuracy}", flush=True)
+
 
     # Plot 1: Accuracy vs Iteration
     plt.figure(figsize=(7, 4.5))
