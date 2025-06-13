@@ -97,7 +97,7 @@ def run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_p
     train_loader, val_loader, test_loader = setup_data()
 
     for trial in range(num_trials):
-        print(f"\n[Trial {trial + 1}/{num_trials}] Starting new trial...")
+        print(f"\n[Trial {trial + 1}/{num_trials}] Starting new trial...", flush=True)
         model = LeNet().to(device)
         scaler = GradScaler()
         initial_weights = {k: v.clone() for k, v in model.state_dict().items()}
@@ -105,7 +105,7 @@ def run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_p
         trial_accs = []
 
         for iteration in range(max_iterations):
-            print(f"\n Iteration {iteration + 1}/{max_iterations} (Pruning {prune_percent}% of remaining weights)")
+            print(f"\n Iteration {iteration + 1}/{max_iterations} (Pruning {prune_percent}% of remaining weights)", flush=True)
             model.load_state_dict(initial_weights)
             apply_mask_and_reset(model, initial_weights, current_mask)
             optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -119,7 +119,7 @@ def run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_p
                 _, val_acc = evaluate(model, val_loader, criterion, device)
                 _, test_acc = evaluate(model, test_loader, criterion, device)
 
-                print(f"     [Epoch {epoch:2d}] Val Acc = {val_acc:.2f}% | Test Acc = {test_acc:.2f}%")
+                print(f"     [Epoch {epoch:2d}] Val Acc = {val_acc:.2f}% | Test Acc = {test_acc:.2f}%", flush=True)
 
                 if val_acc > best_val_acc:
                     best_val_acc = val_acc
@@ -128,16 +128,16 @@ def run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_p
                     patience += 1
 
                 if patience >= early_stop_patience:
-                    print(f"Early stopping triggered after {epoch} epochs (patience={early_stop_patience})")
+                    print(f"Early stopping triggered after {epoch} epochs (patience={early_stop_patience})", flush=True)
                     break
 
                 last_test_acc = test_acc
 
-            print(f"Iteration {iteration + 1} finished with Test Accuracy = {last_test_acc:.2f}%\n")
+            print(f"Iteration {iteration + 1} finished with Test Accuracy = {last_test_acc:.2f}%\n", flush=True)
             trial_accs.append(last_test_acc)
             current_mask = prune_by_percentile(model, prune_percent, current_mask)
 
-        print(f"[Trial {trial + 1}] Completed with final accuracies: {trial_accs}\n")
+        print(f"[Trial {trial + 1}] Completed with final accuracies: {trial_accs}\n", flush=True)
         all_trials_results.append(trial_accs)
 
     return np.array(all_trials_results)
@@ -157,7 +157,6 @@ def plot_accuracy_vs_iteration(all_trials_results):
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.show()
 
 # Accuracy vs Sparsity
 def plot_accuracy_vs_sparsity(all_trials_results, prune_percent):
@@ -182,7 +181,6 @@ def plot_accuracy_vs_sparsity(all_trials_results, prune_percent):
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()
-    plt.show()
 
 print("Starting full experiment...", flush=True)
 
@@ -190,8 +188,6 @@ print("Starting full experiment...", flush=True)
 # Run Full Experiment
 if __name__ == "__main__":
     results = run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_patience=3, num_trials=5)
-    print(f"[Progress] Iteration {iteration+1}/{max_iterations} - Accuracy: {accuracy}", flush=True)
-
 
     # Plot 1: Accuracy vs Iteration
     plt.figure(figsize=(7, 4.5))
