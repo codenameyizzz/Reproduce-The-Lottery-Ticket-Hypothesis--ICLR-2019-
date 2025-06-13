@@ -188,5 +188,15 @@ def plot_accuracy_vs_sparsity(all_trials_results, prune_percent):
 # Run Full Experiment
 if __name__ == "__main__":
     results = run_full_experiment(device, prune_percent=20, max_iterations=5, early_stop_patience=3, num_trials=5)
+
+    # Plot 1: Accuracy vs Iteration
+    plt.figure(figsize=(7, 4.5))
     plot_accuracy_vs_iteration(results)
+    plt.savefig("accuracy_vs_iteration.png")
+    plt.close()
+
+    # Plot 2: Accuracy vs Sparsity
+    plt.figure(figsize=(7, 4.5))
     plot_accuracy_vs_sparsity(results, prune_percent=20)
+    plt.savefig("accuracy_vs_sparsity.png")
+    plt.close()
